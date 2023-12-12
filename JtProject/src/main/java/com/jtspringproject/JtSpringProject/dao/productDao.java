@@ -44,6 +44,7 @@ public class productDao {
 	public Boolean deletProduct(int id) {
 
 		Session session = this.sessionFactory.getCurrentSession();
+
 		Object persistanceInstance = session.load(Product.class, id);
 
 		if (persistanceInstance != null) {

@@ -4,6 +4,9 @@
 # # create database and use it
 # CREATE DATABASE IF NOT EXISTS ecommjava;
 USE ecommjava;
+select * from CUSTOMER;
+select * from CATEGORY;
+select * from PRODUCT;
 #
 # # create the category table
 # CREATE TABLE IF NOT EXISTS CATEGORY(
@@ -50,11 +53,15 @@ USE ecommjava;
 # customer_id int null
 # );
 #
+
+select * from PRODUCT;
+
+#     delete from PRODUCT where product_id=14;
 # # insert default products
-# INSERT INTO PRODUCT(description, image, name, price, quantity, weight, category_id) VALUES
-#                                                                                         ('Fresh and juicy', 'https://freepngimg.com/save/9557-apple-fruit-transparent/744x744', 'Apple', 3, 40, 76, 1),
-#                                                                                         ('Woops! There goes the eggs...', 'https://www.nicepng.com/png/full/813-8132637_poiata-bunicii-cracked-egg.png', 'Cracked Eggs', 1, 90, 43, 9);
-#
+INSERT INTO PRODUCT(description, image, name, price, quantity, weight, category_id) VALUES
+                                                                                        ('Fresh and juicy', 'https://freepngimg.com/save/9557-apple-fruit-transparent/744x744', 'Apple', 3, 40, 76, 1),
+                                                                                        ('Woops! There goes the eggs...', 'https://www.nicepng.com/png/full/813-8132637_poiata-bunicii-cracked-egg.png', 'Cracked Eggs', 1, 90, 43, 9);
+
 #
 # # create indexes
 # CREATE INDEX FK7u438kvwr308xcwr4wbx36uiw
@@ -62,3 +69,6 @@ USE ecommjava;
 #
 # CREATE INDEX FKt23apo8r9s2hse1dkt95ig0w5
 #     ON PRODUCT (customer_id);
+
+
+# DROP INDEX FK7u438kvwr308xcwr4wbx36uiw ON PRODUCT;

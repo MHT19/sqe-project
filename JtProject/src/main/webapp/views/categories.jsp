@@ -85,7 +85,9 @@
 
 
 
-
+		<div>
+			<h3 style="color:green;">${success}</h3>
+		</div>
 		<table class="table">
 			<thead class="thead-light">
 				<tr>
@@ -105,7 +107,7 @@
 					<td>
 						<form action="categories/delete" method="get">
 							<input type="hidden" name="id" value="${category.id}">
-							<input type="submit" value="Delete" class="btn btn-danger">
+							<input type="submit"  value="Delete" class="btn btn-danger">
 						</form>
 					</td>
 

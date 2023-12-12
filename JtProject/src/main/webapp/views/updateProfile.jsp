@@ -17,7 +17,7 @@
 <div class="container">
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">User Profile</h3>
-        <br>
+        <br><h3 style="color:green;">${success}</h3>
         <form action="updateuser" method="post">
             <div class="form-group">
                 <label for="firstName">User Name</label>

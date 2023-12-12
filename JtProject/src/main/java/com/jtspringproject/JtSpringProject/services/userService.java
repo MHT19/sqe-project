@@ -26,5 +26,7 @@ public class userService {
 		return this.userDao.getUser(username, password);
 	}
 
-	
+	public User updateUser(User user){
+		return this.userDao.updateUser(user);
+	}
 }

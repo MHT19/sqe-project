@@ -35,6 +35,9 @@ public class AdminController {
 	
 	@Autowired
 	private productService productService;
+
+//	@Autowired
+//			private customerService customerService;
 	
 	int adminlogcheck = 0;
 	String usernameforclass = "";
@@ -61,7 +64,6 @@ public class AdminController {
 	
 	@GetMapping("login")
 	public String adminlogin() {
-		
 		return "adminlogin";
 	}
 	@GetMapping("Dashboard")
@@ -73,23 +75,24 @@ public class AdminController {
 	}
 	@GetMapping("/loginvalidate")
 	public String adminlog(Model model) {
-		
+//		System.out.println("i m here!");
 		return "adminlogin";
 	}
 	@RequestMapping(value = "loginvalidate", method = RequestMethod.POST)
 	public ModelAndView adminlogin( @RequestParam("username") String username, @RequestParam("password") String pass) {
-		
 		User user=this.userService.checkLogin(username, pass);
 		
-		if(user.getRole().equals("ROLE_ADMIN")) {
+		if(user.getRole()!= null && user.getRole().equals("ROLE_ADMIN")) { //added  a null check here
+			System.out.println("i m here inside if!");
 			ModelAndView mv = new ModelAndView("adminHome");
 			adminlogcheck=1;
 			mv.addObject("admin", user);
 			return mv;
 		}
 		else {
+			System.out.println("i m here inside else!");
 			ModelAndView mv = new ModelAndView("adminlogin");
-			mv.addObject("msg", "Please enter correct username and password");
+			mv.addObject("message", "Please enter correct username and password");
 			return mv;
 		}
 	}
@@ -121,9 +124,11 @@ public class AdminController {
 	
 	@GetMapping("categories/delete")
 	public ModelAndView removeCategoryDb(@RequestParam("id") int id)
-	{	
+	{
+			System.out.println("id :"+id);
 			this.categoryService.deleteCategory(id);
 			ModelAndView mView = new ModelAndView("forward:/categories");
+			mView.addObject("success","category has been deleted");
 			return mView;
 	}
 	
@@ -262,8 +267,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "updateuser",method=RequestMethod.POST)
-	public String updateUserProfile(@RequestParam("userid") int userid,@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("address") String address) 
-	
+	public String updateUserProfile(@RequestParam("userid") int userid,@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("address") String address)
 	{
 		try
 		{
@@ -285,5 +289,13 @@ public class AdminController {
 		}
 		return "redirect:/index";
 	}
+
+	//code below for delete a customer
+//	@GetMapping("customer/delete")
+//	public String removeCustomer(@RequestParam("id") int id)
+//	{
+//		this.productService.deleteProduct(id);
+//		return "redirect:/admin/customers";
+//	}
 
 }

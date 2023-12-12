@@ -60,4 +60,10 @@ public class userDao {
 		}
     	
     }
+
+	@Transactional
+	public User updateUser (User user){
+		this.sessionFactory.getCurrentSession().update(String.valueOf(User.class),user);
+		return user;
+	}
 }

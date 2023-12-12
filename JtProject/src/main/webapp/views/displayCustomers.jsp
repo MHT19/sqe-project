@@ -70,6 +70,13 @@
 					    ${customer.address}
 						
 				    </td>
+					<td>
+						<form action="customer/delete" method="get">
+							<input type="hidden" name="id" value="${customer.id}">
+							<input type="submit" value="Delete" class="btn btn-danger">
+						</form>
+					</td>
+
 					</tr>
                 </c:forEach>
 
