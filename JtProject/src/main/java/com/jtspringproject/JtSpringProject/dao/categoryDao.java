@@ -58,4 +58,8 @@ public class categoryDao {
 	public Category getCategory(int id) {
 		return this.sessionFactory.getCurrentSession().get(Category.class,id);
 	}
+
+	public boolean deleteCategory(int categoryId) {
+		return false;
+	}
 }

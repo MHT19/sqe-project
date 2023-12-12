@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Unnamed Coverage Results, AdminControllerTest.returnIndex Coverage Results, All in JtSpringProject Coverage Results, UserDaoTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.jtspringproject.JtSpringProject.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.jtspringproject.JtSpringProject.controller;
+
+import com.jtspringproject.JtSpringProject.models.Cart;
+import com.jtspringproject.JtSpringProject.models.Product;
+import com.jtspringproject.JtSpringProject.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
+import com.jtspringproject.JtSpringProject.services.cartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.jtspringproject.JtSpringProject.services.userService;
+import com.jtspringproject.JtSpringProject.services.productService;
+
+
+@Controller
+<span class="nc" id="L25">public class UserController{</span>
+	
+	@Autowired
+	private userService userService;
+
+	@Autowired
+	private productService productService;
+
+
+	@Autowired
+	private cartService cartService;
+
+	private User yo;
+	private Cart cart;
+
+	@GetMapping(&quot;/register&quot;)
+	public String registerUser()
+	{
+<span class="nc" id="L43">		return &quot;register&quot;;</span>
+	}
+
+	@GetMapping(&quot;/buy&quot;)
+	public String buy()
+	{
+<span class="nc" id="L49">		return &quot;buy&quot;;</span>
+	}
+	
+
+	@GetMapping(&quot;/&quot;)
+	public String userlogin(Model model) {
+		
+<span class="nc" id="L56">		return &quot;userLogin&quot;;</span>
+	}
+
+	@GetMapping(&quot;/logout&quot;)
+	public String userLogout(Model model) {
+
+<span class="nc" id="L62">		return &quot;userLogin&quot;;</span>
+	}
+
+	@GetMapping(&quot;/cartproduct&quot;)
+	public String cartproduct(Model model) {
+
+<span class="nc" id="L68">		return &quot;cartproduct&quot;;</span>
+	}
+	@GetMapping(&quot;/home&quot;)
+	public ModelAndView home(Model model) {
+
+<span class="nc" id="L73">		ModelAndView mView  = new ModelAndView(&quot;index&quot;);</span>
+		//mView.addObject(&quot;user&quot;, u);
+<span class="nc" id="L75">		List&lt;Product&gt; products = this.productService.getProducts();</span>
+
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		if (products.isEmpty()) {</span>
+<span class="nc" id="L78">			mView.addObject(&quot;msg&quot;, &quot;No products are available&quot;);</span>
+		} else {
+<span class="nc" id="L80">			mView.addObject(&quot;products&quot;, products);</span>
+		}
+<span class="nc" id="L82">		return mView;</span>
+	}
+
+
+	@RequestMapping(value = &quot;userloginvalidate&quot;, method = RequestMethod.POST)
+	public ModelAndView userlogin( @RequestParam(&quot;username&quot;) String username, @RequestParam(&quot;password&quot;) String pass,Model model,HttpServletResponse res) {
+		
+<span class="nc" id="L89">		System.out.println(pass);</span>
+<span class="nc" id="L90">		User u = this.userService.checkLogin(username, pass);</span>
+<span class="nc" id="L91">		yo = u;</span>
+<span class="nc" id="L92">		System.out.println(u.getUsername());</span>
+
+<span class="nc bnc" id="L94" title="All 4 branches missed.">		if(u.getUsername()!=null &amp;&amp; u.getRole().equals(&quot;ROLE_ADMIN&quot;))</span>
+		{
+<span class="nc" id="L96">			ModelAndView mView = new ModelAndView(&quot;userLogin&quot;);</span>
+<span class="nc" id="L97">			mView.addObject(&quot;message&quot;, &quot;Please go to admin login page to login as an admin&quot;);</span>
+<span class="nc" id="L98">			return mView;</span>
+		}
+
+
+<span class="nc bnc" id="L102" title="All 4 branches missed.">		if(u.getUsername()!=null &amp;&amp; u.getUsername().equals(username)) {	//added null exception handling</span>
+			
+<span class="nc" id="L104">			res.addCookie(new Cookie(&quot;username&quot;, u.getUsername()));</span>
+<span class="nc" id="L105">			ModelAndView mView  = new ModelAndView(&quot;index&quot;);	</span>
+<span class="nc" id="L106">			mView.addObject(&quot;user&quot;, u);</span>
+<span class="nc" id="L107">			List&lt;Product&gt; products = this.productService.getProducts();</span>
+
+<span class="nc bnc" id="L109" title="All 2 branches missed.">			if (products.isEmpty()) {</span>
+<span class="nc" id="L110">				mView.addObject(&quot;msg&quot;, &quot;No products are available&quot;);</span>
+			} else {
+<span class="nc" id="L112">				mView.addObject(&quot;products&quot;, products);</span>
+			}
+<span class="nc" id="L114">			return mView;</span>
+
+		}else {
+<span class="nc" id="L117">			ModelAndView mView = new ModelAndView(&quot;userLogin&quot;);</span>
+<span class="nc" id="L118">			mView.addObject(&quot;message&quot;, &quot;Please enter correct email and password&quot;);</span>
+<span class="nc" id="L119">			return mView;</span>
+		}
+		
+	}
+	
+	
+	@GetMapping(&quot;/user/products&quot;)
+	public ModelAndView getproduct() {
+
+<span class="nc" id="L128">		ModelAndView mView = new ModelAndView(&quot;uproduct&quot;);</span>
+
+<span class="nc" id="L130">		List&lt;Product&gt; products = this.productService.getProducts();</span>
+
+<span class="nc bnc" id="L132" title="All 2 branches missed.">		if(products.isEmpty()) {</span>
+<span class="nc" id="L133">			mView.addObject(&quot;msg&quot;,&quot;No products are available&quot;);</span>
+		}else {
+<span class="nc" id="L135">			mView.addObject(&quot;products&quot;,products);</span>
+		}
+
+<span class="nc" id="L138">		return mView;</span>
+	}
+	@RequestMapping(value = &quot;newuserregister&quot;, method = RequestMethod.POST)
+	public ModelAndView newUseRegister(@ModelAttribute User user)
+	{
+<span class="nc" id="L143">		System.out.println(&quot;resgiter user clicked!&quot;);</span>
+		//checking if any required feild is not entered correct or not?
+<span class="nc bnc" id="L145" title="All 4 branches missed.">		if(user.getUsername() != null &amp;&amp; !user.getUsername().trim().isEmpty()</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">				&amp;&amp; user.getPassword() != null &amp;&amp; !user.getPassword().trim().isEmpty()</span>
+<span class="nc bnc" id="L147" title="All 4 branches missed.">		 &amp;&amp; user.getEmail() != null &amp;&amp; !user.getEmail().trim().isEmpty())</span>
+		{
+<span class="nc" id="L149">			System.out.println(user.getEmail());</span>
+<span class="nc" id="L150">			user.setRole(&quot;ROLE_NORMAL&quot;);</span>
+<span class="nc" id="L151">			this.userService.addUser(user);</span>
+//			return &quot;redirect:/&quot;;
+<span class="nc" id="L153">			ModelAndView mView = new ModelAndView(&quot;userLogin&quot;);</span>
+<span class="nc" id="L154">			mView.addObject(&quot;success&quot;, &quot;User has been registered you can login now&quot;);</span>
+<span class="nc" id="L155">			return mView;</span>
+		}
+		else{
+<span class="nc" id="L158">			ModelAndView mView = new ModelAndView(&quot;register&quot;);</span>
+<span class="nc" id="L159">			mView.addObject(&quot;message&quot;, &quot;error in register&quot;);</span>
+<span class="nc" id="L160">			return mView;</span>
+		}
+
+
+	}
+	
+	
+	
+	   //for Learning purpose of model
+		@GetMapping(&quot;/test&quot;)
+		public String Test(Model model)
+		{
+<span class="nc" id="L172">			System.out.println(&quot;test page&quot;);</span>
+<span class="nc" id="L173">			model.addAttribute(&quot;author&quot;,&quot;jay gajera&quot;);</span>
+<span class="nc" id="L174">			model.addAttribute(&quot;id&quot;,40);</span>
+			
+<span class="nc" id="L176">			List&lt;String&gt; friends = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L177">			model.addAttribute(&quot;f&quot;,friends);</span>
+<span class="nc" id="L178">			friends.add(&quot;xyz&quot;);</span>
+<span class="nc" id="L179">			friends.add(&quot;abc&quot;);</span>
+			
+<span class="nc" id="L181">			return &quot;test&quot;;</span>
+		}
+		
+		// for learning purpose of model and view ( how data is pass to view)
+		
+		@GetMapping(&quot;/test2&quot;)
+		public ModelAndView Test2()
+		{
+<span class="nc" id="L189">			System.out.println(&quot;test page&quot;);</span>
+			//create modelandview object
+<span class="nc" id="L191">			ModelAndView mv=new ModelAndView();</span>
+<span class="nc" id="L192">			mv.addObject(&quot;name&quot;,&quot;jay gajera 17&quot;);</span>
+<span class="nc" id="L193">			mv.addObject(&quot;id&quot;,40);</span>
+<span class="nc" id="L194">			mv.setViewName(&quot;test2&quot;);</span>
+			
+<span class="nc" id="L196">			List&lt;Integer&gt; list=new ArrayList&lt;Integer&gt;();</span>
+<span class="nc" id="L197">			list.add(10);</span>
+<span class="nc" id="L198">			list.add(25);</span>
+<span class="nc" id="L199">			mv.addObject(&quot;marks&quot;,list);</span>
+<span class="nc" id="L200">			return mv;</span>
+			
+			
+		}
+
+
+//	@GetMapping(&quot;/cartproduct&quot;)
+//	public ModelAndView  cartProduct()
+//	{
+//		ModelAndView mv= new ModelAndView(&quot;cartproduct&quot;);
+//		return mv;
+//	}
+
+	@GetMapping(&quot;profileDisplay&quot;)
+	public ModelAndView profileDisplay()
+	{
+//		userService.
+<span class="nc" id="L217">		System.out.println(&quot;username====&gt;&quot; + yo.getUsername());</span>
+<span class="nc" id="L218">		ModelAndView mv= new ModelAndView(&quot;updateProfile&quot;);</span>
+<span class="nc" id="L219">		mv.addObject(&quot;userid&quot;,yo.getId());</span>
+<span class="nc" id="L220">		mv.addObject(&quot;username&quot;,yo.getUsername());</span>
+<span class="nc" id="L221">		mv.addObject(&quot;email&quot;,yo.getEmail());</span>
+<span class="nc" id="L222">		mv.addObject(&quot;password&quot;,yo.getPassword());</span>
+<span class="nc" id="L223">		mv.addObject(&quot;address&quot;,yo.getAddress());</span>
+<span class="nc" id="L224">		return mv;</span>
+	}
+
+	@RequestMapping(value = &quot;updateuser&quot;, method = RequestMethod.POST)
+public ModelAndView profileUpdate(@RequestParam(&quot;username&quot;) String username, @RequestParam(&quot;password&quot;) String password,@RequestParam(&quot;email&quot;) String email, @RequestParam(&quot;address&quot;) String address, Model model)
+	{
+<span class="nc bnc" id="L230" title="All 2 branches missed.">		if(yo!=null)</span>
+		{
+<span class="nc" id="L232">			yo.setUsername(username.trim());</span>
+<span class="nc" id="L233">			yo.setPassword(password);</span>
+<span class="nc" id="L234">			yo.setEmail(email);</span>
+<span class="nc" id="L235">			yo.setAddress(address);</span>
+
+<span class="nc" id="L237">			userService.updateUser(yo);</span>
+		}
+<span class="nc" id="L239">		ModelAndView mv= new ModelAndView(&quot;updateProfile&quot;);</span>
+//		mv.addObject(&quot;userid&quot;,yo.getId());
+<span class="nc" id="L241">		mv.addObject(&quot;username&quot;,yo.getUsername());</span>
+<span class="nc" id="L242">		mv.addObject(&quot;email&quot;,yo.getEmail());</span>
+<span class="nc" id="L243">		mv.addObject(&quot;password&quot;,yo.getPassword());</span>
+<span class="nc" id="L244">		mv.addObject(&quot;address&quot;,yo.getAddress());</span>
+<span class="nc" id="L245">		mv.addObject(&quot;success&quot;,&quot;Profile has been updated successfully&quot;);</span>
+<span class="nc" id="L246">		return mv;</span>
+	}
+
+	@GetMapping(&quot;carts&quot;)
+	public String getCartDetail(Model model,@RequestParam(&quot;id&quot;) int id)
+	{
+
+<span class="nc" id="L253">		List&lt;Cart&gt; carts = cartService.getCarts();</span>
+
+
+<span class="nc bnc" id="L256" title="All 2 branches missed.">		if(cart == null)</span>
+<span class="nc" id="L257">			cart = new Cart();</span>
+<span class="nc" id="L258">		cart.setCustomer(yo);</span>
+
+<span class="nc bnc" id="L260" title="All 2 branches missed.">		for(Cart c : carts)</span>
+		{
+<span class="nc bnc" id="L262" title="All 2 branches missed.">			if(c.getCustomer().getId() == id)</span>
+			{
+<span class="nc" id="L264">				cart = c;</span>
+<span class="nc" id="L265">				model.addAttribute(&quot;cart&quot;,cart);</span>
+<span class="nc" id="L266">				return &quot;cartproduct&quot;;</span>
+			}
+<span class="nc" id="L268">		}</span>
+
+<span class="nc" id="L270">		model.addAttribute(&quot;cart&quot;,cart);</span>
+
+<span class="nc" id="L272">		return &quot;cartproduct&quot;;</span>
+
+	}
+	@PostMapping(&quot;addToCart&quot;)
+	public String addToCart(@RequestParam(&quot;id&quot;) int id)
+	{
+<span class="nc" id="L278">		Product p = productService.getProduct(id);</span>
+
+		//System.out.println(cart.getId());
+
+<span class="nc bnc" id="L282" title="All 2 branches missed.">		if(cart.getCustomer() == null)</span>
+<span class="nc" id="L283">			cart.setCustomer(yo);</span>
+
+<span class="nc bnc" id="L285" title="All 2 branches missed.">		if(cart.getProducts().isEmpty()) {</span>
+<span class="nc" id="L286">			cart.addProduct(p);</span>
+<span class="nc" id="L287">			cartService.addCart(cart);</span>
+		}
+		else {
+<span class="nc" id="L290">			cart.addProduct(p);</span>
+<span class="nc" id="L291">			cartService.updateCart(cart);</span>
+		}
+
+
+<span class="nc" id="L295">		return &quot;redirect:/carts?id=&quot; + cart.getId();</span>
+	}
+
+	@PostMapping(&quot;deleteFromCart&quot;)
+	public String deleteFromCart(@RequestParam(&quot;id&quot;) int id)
+	{
+<span class="nc" id="L301">		Product p = productService.getProduct(id);</span>
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">		if(!cart.getProducts().isEmpty()) {</span>
+<span class="nc" id="L304">			cart.removeProduct(p);</span>
+<span class="nc" id="L305">			cartService.updateCart(cart);</span>
+		}
+
+<span class="nc" id="L308">		return &quot;redirect:/carts?id=&quot; + cart.getId();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

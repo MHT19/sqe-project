@@ -4,12 +4,6 @@ import com.jtspringproject.JtSpringProject.models.Cart;
 import com.jtspringproject.JtSpringProject.models.Product;
 import com.jtspringproject.JtSpringProject.models.User;
 
-import java.io.Console;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jtspringproject.JtSpringProject.services.userService;
 import com.jtspringproject.JtSpringProject.services.productService;
-import com.jtspringproject.JtSpringProject.services.cartService;
-
 
 
 @Controller
@@ -38,7 +30,12 @@ public class UserController{
 	@Autowired
 	private productService productService;
 
+
+	@Autowired
+	private cartService cartService;
+
 	private User yo;
+	private Cart cart;
 
 	@GetMapping("/register")
 	public String registerUser()
@@ -69,6 +66,20 @@ public class UserController{
 	public String cartproduct(Model model) {
 
 		return "cartproduct";
+	}
+	@GetMapping("/home")
+	public ModelAndView home(Model model) {
+
+		ModelAndView mView  = new ModelAndView("index");
+		//mView.addObject("user", u);
+		List<Product> products = this.productService.getProducts();
+
+		if (products.isEmpty()) {
+			mView.addObject("msg", "No products are available");
+		} else {
+			mView.addObject("products", products);
+		}
+		return mView;
 	}
 
 
@@ -233,5 +244,67 @@ public ModelAndView profileUpdate(@RequestParam("username") String username, @Re
 		mv.addObject("address",yo.getAddress());
 		mv.addObject("success","Profile has been updated successfully");
 		return mv;
+	}
+
+	@GetMapping("carts")
+	public String getCartDetail(Model model,@RequestParam("id") int id)
+	{
+
+		List<Cart> carts = cartService.getCarts();
+
+
+		if(cart == null)
+			cart = new Cart();
+		cart.setCustomer(yo);
+
+		for(Cart c : carts)
+		{
+			if(c.getCustomer().getId() == id)
+			{
+				cart = c;
+				model.addAttribute("cart",cart);
+				return "cartproduct";
+			}
+		}
+
+		model.addAttribute("cart",cart);
+
+		return "cartproduct";
+
+	}
+	@PostMapping("addToCart")
+	public String addToCart(@RequestParam("id") int id)
+	{
+		Product p = productService.getProduct(id);
+
+		//System.out.println(cart.getId());
+
+		if(cart.getCustomer() == null)
+			cart.setCustomer(yo);
+
+		if(cart.getProducts().isEmpty()) {
+			cart.addProduct(p);
+			cartService.addCart(cart);
+		}
+		else {
+			cart.addProduct(p);
+			cartService.updateCart(cart);
+		}
+
+
+		return "redirect:/carts?id=" + cart.getId();
+	}
+
+	@PostMapping("deleteFromCart")
+	public String deleteFromCart(@RequestParam("id") int id)
+	{
+		Product p = productService.getProduct(id);
+
+		if(!cart.getProducts().isEmpty()) {
+			cart.removeProduct(p);
+			cartService.updateCart(cart);
+		}
+
+		return "redirect:/carts?id=" + cart.getId();
 	}
 }

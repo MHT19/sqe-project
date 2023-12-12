@@ -32,6 +32,8 @@ public class AdminController {
 	private userService userService;
 	@Autowired
 	private categoryService categoryService;
+
+	private User yo;
 	
 	@Autowired
 	private productService productService;
@@ -78,9 +80,16 @@ public class AdminController {
 //		System.out.println("i m here!");
 		return "adminlogin";
 	}
+
+//	@GetMapping("/adminhome")
+//	public String adminHomee(Model model) {
+////		System.out.println("i m here!");
+//		return "adminlogin";
+//	}
 	@RequestMapping(value = "loginvalidate", method = RequestMethod.POST)
 	public ModelAndView adminlogin( @RequestParam("username") String username, @RequestParam("password") String pass) {
 		User user=this.userService.checkLogin(username, pass);
+		yo = user;
 		
 		if(user.getRole()!= null && user.getRole().equals("ROLE_ADMIN")) { //added  a null check here
 			System.out.println("i m here inside if!");
@@ -96,6 +105,16 @@ public class AdminController {
 			return mv;
 		}
 	}
+	@GetMapping("home")
+	public ModelAndView displayHomepage(){
+		System.out.println("i m here in it!");
+		ModelAndView mv = new ModelAndView("adminHome");
+		adminlogcheck=1;
+		mv.addObject("admin", yo);
+		return mv;
+	}
+
+
 	@GetMapping("categories")
 	public ModelAndView getcategory() {
 		if(adminlogcheck==0){
@@ -123,13 +142,11 @@ public class AdminController {
 	}
 	
 	@GetMapping("categories/delete")
-	public ModelAndView removeCategoryDb(@RequestParam("id") int id)
+	public String removeCategoryDb(@RequestParam("id") int id)
 	{
 			System.out.println("id :"+id);
 			this.categoryService.deleteCategory(id);
-			ModelAndView mView = new ModelAndView("forward:/categories");
-			mView.addObject("success","category has been deleted");
-			return mView;
+			return "redirect:/admin/categories";
 	}
 	
 	@GetMapping("categories/update")
@@ -212,6 +229,12 @@ public class AdminController {
 		this.productService.deleteProduct(id);
 		return "redirect:/admin/products";
 	}
+
+//	@GetMapping("/admin/products")
+//	public String adminProducts(@RequestParam("id") int id)
+//	{
+//		return "redirect:/admin/products";
+//	}
 	
 	@PostMapping("products")
 	public String postproduct() {
@@ -297,5 +320,7 @@ public class AdminController {
 //		this.productService.deleteProduct(id);
 //		return "redirect:/admin/customers";
 //	}
+
+
 
 }

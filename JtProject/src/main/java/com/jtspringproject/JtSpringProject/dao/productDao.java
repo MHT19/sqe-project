@@ -47,7 +47,8 @@ public class productDao {
 
 		Object persistanceInstance = session.load(Product.class, id);
 
-		if (persistanceInstance != null) {
+		if (persistanceInstance != null)
+		{
 			session.delete(persistanceInstance);
 			return true;
 		}
